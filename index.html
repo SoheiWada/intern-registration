@@ -169,7 +169,6 @@
         }
     });
 
-    // 生年月日の取得
     const dobYear = document.getElementById("dob-year").value;
     const dobMonth = document.getElementById("dob-month").value;
     const dobDay = document.getElementById("dob-day").value;
@@ -181,37 +180,13 @@
     }
 
     if (isValid) {
-        // 画像をBase64形式で取得
         let fileInput = document.getElementById("photo");
         if (fileInput.files.length > 0) {
             let reader = new FileReader();
             reader.onloadend = function () {
-                formData.photo = reader.result.split(',')[1]; // Base64データを取得
-
-                // ローカルストレージにデータを保存
+                formData.photo = reader.result.split(',')[1];
                 localStorage.setItem("formData", JSON.stringify(formData));
                 console.log("Form Data Saved to localStorage:", formData);
-
-                // EmailJSで画像を添付して送信
-                emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-                    name: formData.name,
-                    email: formData.email,
-                    photo: formData.photo // 画像データを添付
-                }).then(function(response) {
-                    console.log("メール送信成功", response.status, response.text);
-                }, function(error) {
-                    console.log("メール送信失敗", error);
-                });
-
-                // Googleスプレッドシートへデータ送信
-                fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_WEB_APP_URL/exec", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData)
-                }).then(response => response.text())
-                .then(data => console.log("Googleスプレッドシートに登録成功: ", data))
-                .catch(error => console.log("Googleスプレッドシート登録失敗: ", error));
-
                 window.location.href = "confirmation.html";
             };
             reader.readAsDataURL(fileInput.files[0]);

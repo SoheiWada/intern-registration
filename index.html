@@ -118,6 +118,28 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+    const restoreData = JSON.parse(localStorage.getItem("restoreData"));
+
+    if (restoreData) {
+        const fields = ["name", "furigana", "email", "phone", "job", "schedule", "experience", "skills", "motivation"];
+        fields.forEach(id => {
+            let input = document.getElementById(id);
+            if (input) {
+                input.value = restoreData[id] || "";
+            }
+        });
+
+        const dob = restoreData.dob ? restoreData.dob.split("-") : [];
+        if (dob.length === 3) {
+            document.getElementById("dob-year").value = dob[0];
+            document.getElementById("dob-month").value = dob[1];
+            document.getElementById("dob-day").value = dob[2];
+        }
+
+        localStorage.removeItem("restoreData");
+    }
+});
+        document.addEventListener("DOMContentLoaded", function() {
             const dropArea = document.getElementById("drop-area");
             const fileInput = document.getElementById("photo");
             

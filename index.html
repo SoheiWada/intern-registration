@@ -27,7 +27,7 @@
         <label>・フリガナ（<span style="color: red;">必須</span>）<input type="text" id="furigana" required></label>
         <span class="error" id="error-furigana"></span>
 
-       <label>・生年月日（<span style="color: red;">必須</span>）</label>
+        <label>・生年月日（<span style="color: red;">必須</span>）</label>
         <div class="dob-container">
             <select id="dob-year" required>
                 <option value="">YYYY</option>
@@ -153,77 +153,62 @@
         });
 
         function validateForm() {
-    let isValid = true;
-    document.querySelectorAll(".error").forEach(el => el.textContent = "");
+            let isValid = true;
+            document.querySelectorAll(".error").forEach(el => el.textContent = "");
 
-    const fields = ["name", "furigana", "email", "job", "schedule", "experience", "skills", "motivation"];
-    let formData = {};
+            const fields = ["name", "furigana", "email", "job", "schedule", "experience", "skills", "motivation"];
+            let formData = {};
 
-    fields.forEach(id => {
-        let input = document.getElementById(id);
-        if (!input.value.trim()) {
-            document.getElementById("error-" + id).textContent = "未入力です";
-            isValid = false;
-        } else {
-            formData[id] = input.value;
-        }
-    });
+            fields.forEach(id => {
+                let input = document.getElementById(id);
+                if (!input.value.trim()) {
+                    document.getElementById("error-" + id).textContent = "未入力です";
+                    isValid = false;
+                } else {
+                    formData[id] = input.value;
+                }
+            });
 
-    const dobYear = document.getElementById("dob-year").value;
-    const dobMonth = document.getElementById("dob-month").value;
-    const dobDay = document.getElementById("dob-day").value;
-    if (!dobYear || !dobMonth || !dobDay) {
-        document.getElementById("error-dob-year").textContent = "未入力です";
-        isValid = false;
-    } else {
-        formData.dob = `${dobYear}-${dobMonth}-${dobDay}`;
-    }
+            const dobYear = document.getElementById("dob-year").value;
+            const dobMonth = document.getElementById("dob-month").value;
+            const dobDay = document.getElementById("dob-day").value;
+            if (!dobYear || !dobMonth || !dobDay) {
+                document.getElementById("error-dob-year").textContent = "未入力です";
+                isValid = false;
+            } else {
+                formData.dob = `${dobYear}-${dobMonth}-${dobDay}`;
+            }
 
-    if (isValid) {
-        let fileInput = document.getElementById("photo");
-        if (fileInput.files.length > 0) {
-            let reader = new FileReader();
-            reader.onloadend = function () {
-                formData.photo = reader.result.split(',')[1];
+            if (isValid) {
+                let fileInput = document.getElementById("photo");
+                if (fileInput.files.length > 0) {
+                    let reader = new FileReader();
+                    reader.onloadend = function () {
+                        formData.photo = reader.result.split(',')[1];
 
-                // ローカルストレージにデータを保存する試み
-                try {
-                    localStorage.setItem("formData", JSON.stringify(formData));
-                    console.log("Form Data Saved to localStorage:", formData);
-                    window.location.href = "confirmation.html";
-                } catch (e) {
-                    if (e.name === 'QuotaExceededError') {
-                        alert("保存容量が超過しました。データを削減して再度お試しください。");
+                        try {
+                            localStorage.setItem("formData", JSON.stringify(formData));
+                            console.log("Form Data Saved to localStorage:", formData);
+                            window.location.href = "confirmation.html";
+                        } catch (e) {
+                            if (e.name === 'QuotaExceededError') {
+                                alert("保存容量が超過しました。データを削減して再度お試しください。");
+                            }
+                        }
+                    };
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else {
+                    try {
+                        localStorage.setItem("formData", JSON.stringify(formData));
+                        console.log("Form Data Saved to localStorage without photo:", formData);
+                        window.location.href = "confirmation.html";
+                    } catch (e) {
+                        if (e.name === 'QuotaExceededError') {
+                            alert("保存容量が超過しました。データを削減して再度お試しください。");
+                        }
                     }
                 }
-            };
-            reader.readAsDataURL(fileInput.files[0]);
-        } else {
-            try {
-                localStorage.setItem("formData", JSON.stringify(formData));
-                console.log("Form Data Saved to localStorage without photo:", formData);
-                window.location.href = "confirmation.html";
-            } catch (e) {
-                if (e.name === 'QuotaExceededError') {
-                    alert("保存容量が超過しました。データを削減して再度お試しください。");
-                }
             }
-        }
-    }
-}
-
-        function doPost(e) {
-            var sheet = SpreadsheetApp.openById("YOUR_SPREADSHEET_ID").getSheetByName("シート1");
-            var data = JSON.parse(e.postData.contents);
-
-            var fileBlob = Utilities.newBlob(Utilities.base64Decode(data.photo), "image/png", "upload.png");
-            var folder = DriveApp.getFolderById("YOUR_DRIVE_FOLDER_ID"); // アップロード先のGoogleドライブフォルダID
-            var file = folder.createFile(fileBlob);
-            var fileUrl = file.getUrl(); // Googleドライブの画像URL取得
-
-            sheet.appendRow([data.name, data.furigana, data.dob, data.email, data.phone, data.job, data.schedule, data.experience, data.skills, data.motivation, fileUrl]);
-
-            return ContentService.createTextOutput("登録完了").setMimeType(ContentService.MimeType.TEXT);
         }
     </script>
 </body>

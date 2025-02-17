@@ -151,65 +151,64 @@
                 }
             });
         });
+    function validateForm() {
+        let isValid = true;
+        document.querySelectorAll(".error").forEach(el => el.textContent = "");
 
-        function validateForm() {
-            let isValid = true;
-            document.querySelectorAll(".error").forEach(el => el.textContent = "");
+        const fields = ["name", "furigana", "email", "phone", "job", "schedule", "experience", "skills", "motivation"];
+        let formData = {};
 
-            const fields = ["name", "furigana", "email", "phone", "job", "schedule", "experience", "skills", "motivation"];
-            let formData = {};
-
-            fields.forEach(id => {
-                let input = document.getElementById(id);
-                if (!input.value.trim()) {
-                    document.getElementById("error-" + id).textContent = "未入力です";
-                    isValid = false;
-                } else {
-                    formData[id] = input.value;
-                }
-            });
-
-            const dobYear = document.getElementById("dob-year").value;
-            const dobMonth = document.getElementById("dob-month").value;
-            const dobDay = document.getElementById("dob-day").value;
-            if (!dobYear || !dobMonth || !dobDay) {
-                document.getElementById("error-dob-year").textContent = "未入力です";
+        fields.forEach(id => {
+            let input = document.getElementById(id);
+            if (!input.value.trim()) {
+                document.getElementById("error-" + id).textContent = "未入力です";
                 isValid = false;
             } else {
-                formData.dob = `${dobYear}-${dobMonth}-${dobDay}`;
+                formData[id] = input.value;
             }
+        });
 
-            if (isValid) {
-                let fileInput = document.getElementById("photo");
-                if (fileInput.files.length > 0) {
-                    let reader = new FileReader();
-                    reader.onloadend = function () {
-                        formData.photo = reader.result.split(',')[1];
+        const dobYear = document.getElementById("dob-year").value;
+        const dobMonth = document.getElementById("dob-month").value;
+        const dobDay = document.getElementById("dob-day").value;
+        if (!dobYear || !dobMonth || !dobDay) {
+            document.getElementById("error-dob-year").textContent = "未入力です";
+            isValid = false;
+        } else {
+            formData.dob = `${dobYear}-${dobMonth}-${dobDay}`;
+        }
 
-                        try {
-                            localStorage.setItem("formData", JSON.stringify(formData));
-                            console.log("Form Data Saved to localStorage:", formData);
-                            window.location.href = "confirmation.html";
-                        } catch (e) {
-                            if (e.name === 'QuotaExceededError') {
-                                alert("保存容量が超過しました。データを削減して再度お試しください。");
-                            }
-                        }
-                    };
-                    reader.readAsDataURL(fileInput.files[0]);
-                } else {
+        if (isValid) {
+            let fileInput = document.getElementById("photo");
+            if (fileInput.files.length > 0) {
+                let reader = new FileReader();
+                reader.onloadend = function () {
+                    formData.photo = reader.result.split(',')[1];
+
                     try {
                         localStorage.setItem("formData", JSON.stringify(formData));
-                        console.log("Form Data Saved to localStorage without photo:", formData);
+                        console.log("Form Data Saved to localStorage:", formData);
                         window.location.href = "confirmation.html";
                     } catch (e) {
                         if (e.name === 'QuotaExceededError') {
                             alert("保存容量が超過しました。データを削減して再度お試しください。");
                         }
                     }
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                try {
+                    localStorage.setItem("formData", JSON.stringify(formData));
+                    console.log("Form Data Saved to localStorage without photo:", formData);
+                    window.location.href = "confirmation.html";
+                } catch (e) {
+                    if (e.name === 'QuotaExceededError') {
+                        alert("保存容量が超過しました。データを削減して再度お試しください。");
+                    }
                 }
             }
         }
-    </script>
+    }
+</script>
 </body>
 </html>

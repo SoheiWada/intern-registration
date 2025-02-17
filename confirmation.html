@@ -16,13 +16,18 @@
         <h2>登録内容を確認してください</h2>
         <div id="confirmation"></div>
         <div class="buttons">
-            <button onclick="window.location.href='index.html'">修正</button>
+            <button onclick="goBack()">修正</button>
             <button onclick="submitForm()">送信</button>
         </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            if (localStorage.getItem("restoreData")) {
+                localStorage.setItem("formData", localStorage.getItem("restoreData"));
+                localStorage.removeItem("restoreData");
+            }
+
             const formData = JSON.parse(localStorage.getItem("formData"));
             const confirmationDiv = document.getElementById("confirmation");
 
@@ -32,6 +37,11 @@
                 confirmationDiv.appendChild(p);
             }
         });
+
+        function goBack() {
+            localStorage.setItem("restoreData", localStorage.getItem("formData"));
+            window.location.href = "index.html";
+        }
 
         function submitForm() {
             const formData = JSON.parse(localStorage.getItem("formData"));

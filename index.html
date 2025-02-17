@@ -65,7 +65,16 @@
         
         <label>・電話番号（任意）<input type="tel" id="phone"></label>
         
-        <label>・希望職種（<span style="color: red;">必須</span>）<input type="text" id="job" required></label>
+        <label>・希望職種（<span style="color: red;">必須</span>）
+            <select id="job" required>
+                <option value="">選択してください</option>
+                <option value="音響">音響</option>
+                <option value="照明">照明</option>
+                <option value="映像">映像</option>
+                <option value="舞台">舞台</option>
+                <option value="運営">運営</option>
+            </select>
+        </label>
         <span class="error" id="error-job"></span>
         
         <label>・希望勤務日程（<span style="color: red;">必須</span>）<textarea id="schedule" required></textarea></label>

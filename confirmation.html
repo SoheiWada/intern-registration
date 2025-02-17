@@ -23,19 +23,20 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const formData = JSON.parse(localStorage.getItem("formData"));
+            const formData = localStorage.getItem("formData");
             if (!formData) {
                 alert("入力データがありません。登録ページに戻ります。");
                 window.location.href = "index.html";
                 return;
             }
             
+            const parsedData = JSON.parse(formData);
             let html = "";
-            Object.keys(formData).forEach(key => {
+            Object.keys(parsedData).forEach(key => {
                 if (key === "photo") {
-                    html += `<p><strong>写真:</strong></p><img src="data:image/png;base64,${formData[key]}" alt="Uploaded Photo">`;
+                    html += `<p><strong>写真:</strong></p><img src="data:image/png;base64,${parsedData[key]}" alt="Uploaded Photo">`;
                 } else {
-                    html += `<p><strong>${key}:</strong> ${formData[key]}</p>`;
+                    html += `<p><strong>${key}:</strong> ${parsedData[key]}</p>`;
                 }
             });
             document.getElementById("confirmationData").innerHTML = html;

@@ -190,19 +190,5 @@
           return ContentService.createTextOutput("登録完了").setMimeType(ContentService.MimeType.TEXT);
         }
     </script>
-    function doPost(e) {
-  var sheet = SpreadsheetApp.openById("YOUR_SPREADSHEET_ID").getSheetByName("シート1");
-  var data = JSON.parse(e.postData.contents);
-
-  var fileBlob = Utilities.newBlob(Utilities.base64Decode(data.photo), "image/png", "upload.png");
-  var folder = DriveApp.getFolderById("YOUR_DRIVE_FOLDER_ID"); // アップロード先のGoogleドライブフォルダID
-  var file = folder.createFile(fileBlob);
-  var fileUrl = file.getUrl(); // Googleドライブの画像URL取得
-
-  sheet.appendRow([data.name, data.furigana, data.dob, data.email, data.phone, data.job, data.schedule, data.experience, data.skills, data.motivation, fileUrl]);
-
-  return ContentService.createTextOutput("登録完了").setMimeType(ContentService.MimeType.TEXT);
-}
-    
 </body>
 </html>

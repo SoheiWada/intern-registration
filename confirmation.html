@@ -3,64 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>入力確認ページ</title>
+    <title>登録確認ページ</title>
     <style>
         body { font-family: Arial, sans-serif; }
         .container { max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
+        h2 { text-align: center; }
         .buttons { margin-top: 15px; display: flex; justify-content: space-between; }
-        img { max-width: 100%; height: auto; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>入力確認ページ</h2>
-        <div id="confirmationData"></div>
+        <h2>登録内容を確認してください</h2>
+        <div id="confirmation"></div>
         <div class="buttons">
-            <button onclick="submitData()">登録</button>
-            <button onclick="goBack()">編集画面へ戻る</button>
+            <button onclick="window.location.href='index.html'">修正</button>
+            <button onclick="submitForm()">送信</button>
         </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const formData = localStorage.getItem("formData");
-            if (!formData) {
-                alert("入力データがありません。登録ページに戻ります。");
-                window.location.href = "index.html";
-                return;
-            }
-            
-            const parsedData = JSON.parse(formData);
-            let html = "";
-            Object.keys(parsedData).forEach(key => {
-                if (key === "photo") {
-                    html += `<p><strong>写真:</strong></p><img src="data:image/png;base64,${parsedData[key]}" alt="Uploaded Photo">`;
-                } else {
-                    html += `<p><strong>${key}:</strong> ${parsedData[key]}</p>`;
-                }
-            });
-            document.getElementById("confirmationData").innerHTML = html;
-        });
-        
-        function submitData() {
             const formData = JSON.parse(localStorage.getItem("formData"));
+            const confirmationDiv = document.getElementById("confirmation");
+
+            for (const key in formData) {
+                const p = document.createElement("p");
+                p.textContent = `${key}: ${formData[key]}`;
+                confirmationDiv.appendChild(p);
+            }
+        });
+
+        function submitForm() {
+            const formData = JSON.parse(localStorage.getItem("formData"));
+
             fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_WEB_APP_URL/exec", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
             }).then(response => response.text())
             .then(data => {
-                alert("登録が完了しました。後日担当者からご連絡いたします。");
+                console.log("Googleスプレッドシートに登録成功: ", data);
                 localStorage.removeItem("formData");
-                window.location.href = "complete.html";
+                alert("登録が完了しました。");
+                window.location.href = "index.html";
             }).catch(error => {
-                console.error("登録失敗", error);
-                alert("登録に失敗しました。もう一度お試しください。");
+                console.log("Googleスプレッドシート登録失敗: ", error);
+                alert("登録に失敗しました。再試行してください。");
             });
-        }
-        
-        function goBack() {
-            window.location.href = "index.html";
         }
     </script>
 </body>

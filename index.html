@@ -159,14 +159,14 @@
         let formData = {};
 
         fields.forEach(id => {
-            let input = document.getElementById(id);
-            if (!input.value.trim()) {
-                document.getElementById("error-" + id).textContent = "未入力です";
-                isValid = false;
-            } else {
-                formData[id] = input.value;
-            }
-        });
+    let input = document.getElementById(id);
+    if (!input.value.trim() && id !== "phone") { // phone フィールドは任意
+        document.getElementById("error-" + id).textContent = "未入力です";
+        isValid = false;
+    } else {
+        formData[id] = input.value;
+    }
+});
 
         const dobYear = document.getElementById("dob-year").value;
         const dobMonth = document.getElementById("dob-month").value;

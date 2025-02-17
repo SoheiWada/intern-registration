@@ -36,6 +36,14 @@
                 p.textContent = `${key}: ${formData[key]}`;
                 confirmationDiv.appendChild(p);
             }
+
+            if (formData.photo) {
+                const img = document.createElement("img");
+                img.src = `data:image/png;base64,${formData.photo}`;
+                img.alt = "Uploaded photo";
+                img.style.maxWidth = "100%";
+                confirmationDiv.appendChild(img);
+            }
         });
 
         function goBack() {

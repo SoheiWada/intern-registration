@@ -85,17 +85,17 @@
         <input type="file" id="photo" accept="image/*" required style="display: none;">
         <span class="error" id="error-photo"></span>
         
-        <p class="privacy-policy">
-            📜 <strong>個人情報の取り扱いについて</strong><br>
-            ご登録いただいた個人情報は、当社の採用活動および関連する業務のためにのみ利用し、
-            第三者へ提供・開示することはありません。<br>
-            なお、当社の個人情報保護方針に基づき、適切に管理いたします。<br>
-            詳細については、<a href="privacy-policy.html" target="_blank">プライバシーポリシー</a>をご確認ください。
-        </p>
-        
-        <div class="buttons">
-            
-            <a href="confirmation.html" style="display: block; text-align: center; margin-top: 10px;">入力確認ページへ</a>
+         <p style="font-size: 0.9em; text-align: center;">
+    📜 <strong>個人情報の取り扱いについて</strong><br>
+    ご登録いただいた個人情報は、当社の採用活動および関連する業務のためにのみ利用し、
+    第三者へ提供・開示することはありません。<br>
+    なお、当社の個人情報保護方針に基づき、適切に管理いたします。<br>
+    詳細については、<a href="privacy-policy.html" target="_blank">プライバシーポリシー</a>をご確認ください。
+</p>
+
+<div class="buttons">
+            <button type="button" onclick="validateForm()">登録</button>
+<a href="confirmation.html" style="display: block; text-align: center; margin-top: 10px;">確認ページへ</a>
         </div>
     </form>
 
@@ -125,12 +125,6 @@
                 fileInput.files = e.dataTransfer.files;
                 if (file) {
                     this.textContent = file.name;
-                }
-            });
-            
-            fileInput.addEventListener("change", function() {
-                if (this.files.length > 0) {
-                    dropArea.textContent = this.files[0].name;
                 }
             });
             
@@ -217,8 +211,6 @@
 
           return ContentService.createTextOutput("登録完了").setMimeType(ContentService.MimeType.TEXT);
         }
-    </script>
-        });
     </script>
 </body>
 </html>

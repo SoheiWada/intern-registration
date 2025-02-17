@@ -186,10 +186,14 @@
             reader.onloadend = function () {
                 formData.photo = reader.result.split(',')[1];
                 localStorage.setItem("formData", JSON.stringify(formData));
-                console.log("Form Data Saved to localStorage:", formData);
+                console.log("Form Data Saved to localStorage:", formData); // デバッグ用
                 window.location.href = "confirmation.html";
             };
             reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            localStorage.setItem("formData", JSON.stringify(formData));
+            console.log("Form Data Saved to localStorage without photo:", formData); // デバッグ用
+            window.location.href = "confirmation.html";
         }
     }
 }

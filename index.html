@@ -18,57 +18,6 @@
         #drop-area { border: 2px dashed #ccc; padding: 20px; text-align: center; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
-    <script>
-    function validateForm() {
-        let isValid = true;
-        document.querySelectorAll(".error").forEach(el => el.textContent = "");
-
-        let formData = {};
-        document.querySelectorAll("[required]").forEach(input => {
-            if (!input.value.trim()) {
-                let errorElement = document.getElementById("error-" + input.id);
-                if (errorElement) {
-                    errorElement.textContent = "未入力です";
-                }
-                isValid = false;
-            } else {
-                formData[input.id] = input.value;
-            }
-        });
-
-        // 画像をBase64形式で取得
-        let fileInput = document.getElementById("photo");
-        if (fileInput.files.length > 0) {
-            let reader = new FileReader();
-            reader.onloadend = function () {
-                formData.photo = reader.result.split(',')[1]; // Base64データを取得
-
-                // EmailJSで画像を添付して送信
-                emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-                    name: formData.name,
-                    email: formData.email,
-                    photo: formData.photo // 画像データを添付
-                }).then(function(response) {
-                    console.log("メール送信成功", response.status, response.text);
-                }, function(error) {
-                    console.log("メール送信失敗", error);
-                });
-
-                // Googleスプレッドシートへデータ送信
-                fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_WEB_APP_URL/exec", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData)
-                }).then(response => response.text())
-                .then(data => console.log("Googleスプレッドシートに登録成功: ", data))
-                .catch(error => console.log("Googleスプレッドシート登録失敗: ", error));
-
-                window.location.href = "confirmation.html";
-            };
-            reader.readAsDataURL(fileInput.files[0]);
-        }
-    }
-</script>
 <body>
     <h2 style="text-align: center;">インターン希望者登録ページ</h2>
     <form id="registrationForm">
@@ -86,33 +35,7 @@
                     for(let year = 1970; year <= 2020; year++) {
                         document.write(`<option value="${year}">${year}</option>`);
                     }
-                        document.getElementById('drop-area').addEventListener('click', function() {
-            document.getElementById('photo').click();
-        });
-
-        document.getElementById('drop-area').addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#000';
-        });
-
-        document.getElementById('drop-area').addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#ccc';
-        });
-
-        document.getElementById('drop-area').addEventListener('drop', function(e) {
-            e.preventDefault();
-            const file = e.dataTransfer.files[0];
-            document.getElementById('photo').files = e.dataTransfer.files;
-            this.textContent = file.name;
-        });
-
-        document.getElementById('photo').addEventListener('change', function() {
-            if (this.files.length > 0) {
-                document.getElementById('drop-area').textContent = this.files[0].name;
-            }
-        });
-    </script>
+                </script>
             </select>
             /
             <select id="dob-month" required>
@@ -202,6 +125,84 @@
                 }
             });
         });
+
+        function validateForm() {
+            let isValid = true;
+            document.querySelectorAll(".error").forEach(el => el.textContent = "");
+
+            let formData = {};
+            document.querySelectorAll("[required]").forEach(input => {
+                if (!input.value.trim()) {
+                    let errorElement = document.getElementById("error-" + input.id);
+                    if (errorElement) {
+                        errorElement.textContent = "未入力です";
+                    }
+                    isValid = false;
+                } else {
+                    formData[input.id] = input.value;
+                }
+            });
+
+            // 画像をBase64形式で取得
+            let fileInput = document.getElementById("photo");
+            if (fileInput.files.length > 0) {
+                let reader = new FileReader();
+                reader.onloadend = function () {
+                    formData.photo = reader.result.split(',')[1]; // Base64データを取得
+
+                    // EmailJSで画像を添付して送信
+                    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+                        name: formData.name,
+                        email: formData.email,
+                        photo: formData.photo // 画像データを添付
+                    }).then(function(response) {
+                        console.log("メール送信成功", response.status, response.text);
+                    }, function(error) {
+                        console.log("メール送信失敗", error);
+                    });
+
+                    // Googleスプレッドシートへデータ送信
+                    fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_WEB_APP_URL/exec", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(formData)
+                    }).then(response => response.text())
+                    .then(data => console.log("Googleスプレッドシートに登録成功: ", data))
+                    .catch(error => console.log("Googleスプレッドシート登録失敗: ", error));
+
+                    window.location.href = "confirmation.html";
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        function doPost(e) {
+          var sheet = SpreadsheetApp.openById("YOUR_SPREADSHEET_ID").getSheetByName("シート1");
+          var data = JSON.parse(e.postData.contents);
+
+          var fileBlob = Utilities.newBlob(Utilities.base64Decode(data.photo), "image/png", "upload.png");
+          var folder = DriveApp.getFolderById("YOUR_DRIVE_FOLDER_ID"); // アップロード先のGoogleドライブフォルダID
+          var file = folder.createFile(fileBlob);
+          var fileUrl = file.getUrl(); // Googleドライブの画像URL取得
+
+          sheet.appendRow([data.name, data.furigana, data.dob, data.email, data.phone, data.job, data.schedule, data.experience, data.skills, data.motivation, fileUrl]);
+
+          return ContentService.createTextOutput("登録完了").setMimeType(ContentService.MimeType.TEXT);
+        }
     </script>
+    function doPost(e) {
+  var sheet = SpreadsheetApp.openById("YOUR_SPREADSHEET_ID").getSheetByName("シート1");
+  var data = JSON.parse(e.postData.contents);
+
+  var fileBlob = Utilities.newBlob(Utilities.base64Decode(data.photo), "image/png", "upload.png");
+  var folder = DriveApp.getFolderById("YOUR_DRIVE_FOLDER_ID"); // アップロード先のGoogleドライブフォルダID
+  var file = folder.createFile(fileBlob);
+  var fileUrl = file.getUrl(); // Googleドライブの画像URL取得
+
+  sheet.appendRow([data.name, data.furigana, data.dob, data.email, data.phone, data.job, data.schedule, data.experience, data.skills, data.motivation, fileUrl]);
+
+  return ContentService.createTextOutput("登録完了").setMimeType(ContentService.MimeType.TEXT);
+}
+    
 </body>
 </html>

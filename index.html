@@ -186,7 +186,7 @@
             reader.onloadend = function () {
                 formData.photo = reader.result.split(',')[1];
 
-                // Attempt to store data in localStorage
+                // ローカルストレージにデータを保存する試み
                 try {
                     localStorage.setItem("formData", JSON.stringify(formData));
                     console.log("Form Data Saved to localStorage:", formData);

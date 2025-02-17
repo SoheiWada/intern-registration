@@ -82,13 +82,13 @@
         
         <label>・経験の有無（<span style="color: red;">必須</span>）
             <select id="experience" required>
-    <option value="">選択してください</option>
-    <option value="経験なし">経験なし</option>
-    <option value="経験あり〜１年未満">経験あり〜１年未満</option>
-    <option value="経験あり〜３年未満">経験あり〜３年未満</option>
-    <option value="経験あり〜５年未満">経験あり〜５年未満</option>
-    <option value="経験あり〜５年以上">経験あり〜５年以上</option>
-</select>
+                <option value="">選択してください</option>
+                <option value="経験なし">経験なし</option>
+                <option value="経験あり〜１年未満">経験あり〜１年未満</option>
+                <option value="経験あり〜３年未満">経験あり〜３年未満</option>
+                <option value="経験あり〜５年未満">経験あり〜５年未満</option>
+                <option value="経験あり〜５年以上">経験あり〜５年以上</option>
+            </select>
         </label>
         <span class="error" id="error-experience"></span>
         
@@ -103,15 +103,15 @@
         <input type="file" id="photo" accept="image/*" required style="display: none;">
         <span class="error" id="error-photo"></span>
         
-         <p style="font-size: 0.9em; text-align: center;">
-    📜 <strong>個人情報の取り扱いについて</strong><br>
-    ご登録いただいた個人情報は、当社の採用活動および関連する業務のためにのみ利用し、
-    第三者へ提供・開示することはありません。<br>
-    なお、当社の個人情報保護方針に基づき、適切に管理いたします。<br>
-    詳細については、<a href="privacy_policy" target="_blank">プライバシーポリシー</a>をご確認ください。
-</p>
+        <p class="privacy-policy">
+            📜 <strong>個人情報の取り扱いについて</strong><br>
+            ご登録いただいた個人情報は、当社の採用活動および関連する業務のためにのみ利用し、
+            第三者へ提供・開示することはありません。<br>
+            なお、当社の個人情報保護方針に基づき、適切に管理いたします。<br>
+            詳細については、<a href="privacy-policy.html" target="_blank">プライバシーポリシー</a>をご確認ください。
+        </p>
 
-<div class="buttons">
+        <div class="buttons">
             <button type="button" onclick="validateForm()">登録確認</button>
         </div>
     </form>
@@ -216,17 +216,17 @@
         }
 
         function doPost(e) {
-          var sheet = SpreadsheetApp.openById("YOUR_SPREADSHEET_ID").getSheetByName("シート1");
-          var data = JSON.parse(e.postData.contents);
+            var sheet = SpreadsheetApp.openById("YOUR_SPREADSHEET_ID").getSheetByName("シート1");
+            var data = JSON.parse(e.postData.contents);
 
-          var fileBlob = Utilities.newBlob(Utilities.base64Decode(data.photo), "image/png", "upload.png");
-          var folder = DriveApp.getFolderById("YOUR_DRIVE_FOLDER_ID"); // アップロード先のGoogleドライブフォルダID
-          var file = folder.createFile(fileBlob);
-          var fileUrl = file.getUrl(); // Googleドライブの画像URL取得
+            var fileBlob = Utilities.newBlob(Utilities.base64Decode(data.photo), "image/png", "upload.png");
+            var folder = DriveApp.getFolderById("YOUR_DRIVE_FOLDER_ID"); // アップロード先のGoogleドライブフォルダID
+            var file = folder.createFile(fileBlob);
+            var fileUrl = file.getUrl(); // Googleドライブの画像URL取得
 
-          sheet.appendRow([data.name, data.furigana, data.dob, data.email, data.phone, data.job, data.schedule, data.experience, data.skills, data.motivation, fileUrl]);
+            sheet.appendRow([data.name, data.furigana, data.dob, data.email, data.phone, data.job, data.schedule, data.experience, data.skills, data.motivation, fileUrl]);
 
-          return ContentService.createTextOutput("登録完了").setMimeType(ContentService.MimeType.TEXT);
+            return ContentService.createTextOutput("登録完了").setMimeType(ContentService.MimeType.TEXT);
         }
     </script>
 </body>

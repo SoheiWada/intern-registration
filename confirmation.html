@@ -16,7 +16,7 @@
         <h2>登録内容を確認してください</h2>
         <div id="confirmation"></div>
         <div class="buttons">
-            <button onclick="goBack()">修正</button>
+            <button onclick="goBack()">編集画面へ戻る</button>
             <button onclick="submitForm()">送信</button>
         </div>
     </div>
@@ -81,7 +81,7 @@
             .then(data => {
                 console.log("Googleスプレッドシートに登録成功: ", data);
                 localStorage.removeItem("formData");
-                alert("登録が完了しました。");
+                alert("登録が完了しました。後日担当者よりご連絡させていただきます。");
                 window.location.href = "index.html";
             }).catch(error => {
                 console.log("Googleスプレッドシート登録失敗: ", error);

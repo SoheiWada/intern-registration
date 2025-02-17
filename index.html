@@ -135,21 +135,39 @@
             });
         });
 
-        function validateForm() {
-            let isValid = true;
-            document.querySelectorAll(".error").forEach(el => el.textContent = "");
+     function validateForm() {
+    let isValid = true;
+    document.querySelectorAll(".error").forEach(el => el.textContent = "");
 
-            let formData = {};
-            document.querySelectorAll("[required]").forEach(input => {
-                if (!input.value.trim()) {
-                    let errorElement = document.getElementById("error-" + input.id);
-                    if (errorElement) {
-                        errorElement.textContent = "未入力です";
-                    }
-                    isValid = false;
-                } else {
-                    formData[input.id] = input.value;
-                }
+    const fields = ["name", "furigana", "email", "job", "schedule", "experience", "skills", "motivation"];
+    let formData = {};
+
+    fields.forEach(id => {
+        let input = document.getElementById(id);
+        if (!input.value.trim()) {
+            document.getElementById("error-" + id).textContent = "未入力です";
+            isValid = false;
+        } else {
+            formData[id] = input.value;
+        }
+    });
+
+    // 生年月日の取得
+    const dobYear = document.getElementById("dob-year").value;
+    const dobMonth = document.getElementById("dob-month").value;
+    const dobDay = document.getElementById("dob-day").value;
+    if (!dobYear || !dobMonth || !dobDay) {
+        document.getElementById("error-dob-year").textContent = "未入力です";
+        isValid = false;
+    } else {
+        formData.dob = `${dobYear}-${dobMonth}-${dobDay}`;
+    }
+
+    if (isValid) {
+        localStorage.setItem("formData", JSON.stringify(formData));
+        window.location.href = "confirmation.html";
+    }
+}
             });
 
             // 画像をBase64形式で取得

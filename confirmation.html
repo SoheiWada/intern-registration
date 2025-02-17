@@ -73,21 +73,74 @@
         function submitForm() {
             const formData = JSON.parse(localStorage.getItem("formData"));
 
-            fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_WEB_APP_URL/exec", {
+            // Step 1: Upload Image to Google Drive
+        const driveUploadUrl = "YOUR_GOOGLE_DRIVE_UPLOAD_URL";
+        const imageBlob = dataURLToBlob(`data:image/png;base64,${formData.photo}`);
+        const form = new FormData();
+        form.append("file", imageBlob, "photo.png");
+
+        fetch(driveUploadUrl, {
+            method: "POST",
+            body: form
+        }).then(response => response.json())
+        .then(data => {
+            const imageUrl = data.webViewLink; // Assume the response contains the image URL
+
+            // Step 2: Send Data with Image Using EmailJS
+            const emailParams = {
+                name: formData.name,
+                furigana: formData.furigana,
+                email: formData.email,
+                phone: formData.phone,
+                job: formData.job,
+                schedule: formData.schedule,
+                experience: formData.experience,
+                skills: formData.skills,
+                motivation: formData.motivation,
+                image_url: imageUrl
+            };
+
+            emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", emailParams)
+            .then(response => {
+                console.log("EmailJS Success:", response.status, response.text);
+            }, error => {
+                console.log("EmailJS Error:", error);
+            });
+
+            // Step 3: Send Data to Google Sheets
+            const sheetsUrl = "https://script.google.com/macros/s/YOUR_DEPLOYED_WEB_APP_URL/exec";
+            formData.image_url = imageUrl;
+
+            fetch(sheetsUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
             }).then(response => response.text())
             .then(data => {
-                console.log("Googleスプレッドシートに登録成功: ", data);
+                console.log("Google Sheets Success:", data);
                 localStorage.removeItem("formData");
                 alert("登録が完了しました。後日担当者よりご連絡させていただきます。");
                 window.location.href = "index.html";
             }).catch(error => {
-                console.log("Googleスプレッドシート登録失敗: ", error);
+                console.log("Google Sheets Error:", error);
                 alert("登録に失敗しました。再試行してください。");
             });
+
+        }).catch(error => {
+            console.log("Google Drive Upload Error:", error);
+            alert("画像のアップロードに失敗しました。再試行してください。");
+        });
+    }
+
+    // Helper function to convert data URL to Blob
+    function dataURLToBlob(dataUrl) {
+        const binary = atob(dataUrl.split(',')[1]);
+        const array = [];
+        for (let i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
         }
-    </script>
+        return new Blob([new Uint8Array(array)], { type: 'image/png' });
+    }
+</script>
 </body>
 </html>

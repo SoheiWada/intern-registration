@@ -4,101 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>インターン希望者登録ページ</title>
-    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js">        document.getElementById('drop-area').addEventListener('click', function() {
-            document.getElementById('photo').click();
-        });
-
-        document.getElementById('drop-area').addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#000';
-        });
-
-        document.getElementById('drop-area').addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#ccc';
-        });
-
-        document.getElementById('drop-area').addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#ccc';
-            const file = e.dataTransfer.files[0];
-            document.getElementById('photo').files = e.dataTransfer.files;
-            if (file) {
-                this.textContent = file.name;
-            }
-        });
-
-        document.getElementById('photo').addEventListener('change', function() {
-            if (this.files.length > 0) {
-                document.getElementById('drop-area').textContent = this.files[0].name;
-            }
-        });
-            function validateForm() {
-            let isValid = true;
-            document.querySelectorAll(".error").forEach(el => el.textContent = "");
-            let formData = {};
-            document.querySelectorAll("[required]").forEach(input => {
-                if (!input.value.trim()) {
-                    let errorElement = document.getElementById("error-" + input.id);
-                    if (errorElement) {
-                        errorElement.textContent = "未入力です";
-                    }
-                    isValid = false;
-                } else {
-                    formData[input.id] = input.value;
-                }
-            });
-            
-            let fileInput = document.getElementById("photo");
-            if (fileInput.files.length > 0) {
-                let reader = new FileReader();
-                reader.onloadend = function () {
-                    formData.photo = reader.result.split(',')[1]; // Base64データを取得
-                    
-                    // EmailJS で画像付きで送信
-                    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", formData)
-                        .then(response => console.log("メール送信成功", response.status, response.text))
-                        .catch(error => console.log("メール送信失敗", error));
-                    
-                    // Google ドライブにアップロード
-                    uploadToDrive(fileInput.files[0], function(photoUrl) {
-                        formData.photoUrl = photoUrl;
-                        
-                        // Googleスプレッドシートへデータ送信
-                        fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_WEB_APP_URL/exec", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(formData)
-                        })
-                        .then(response => response.text())
-                        .then(data => console.log("Googleスプレッドシートに登録成功: ", data))
-                        .catch(error => console.log("Googleスプレッドシート登録失敗: ", error));
-                    });
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            }
-        }
-        
-        function uploadToDrive(file, callback) {
-            let reader = new FileReader();
-            reader.onloadend = function () {
-                let base64Data = reader.result.split(',')[1];
-                
-                fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_WEB_APP_URL/exec", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ fileName: file.name, mimeType: file.type, data: base64Data })
-                })
-                .then(response => response.text())
-                .then(url => {
-                    console.log("Googleドライブにアップロード成功: ", url);
-                    callback(url);
-                })
-                .catch(error => console.log("Googleドライブアップロード失敗: ", error));
-            };
-            reader.readAsDataURL(file);
-        }
-    </script>
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; }
         form { max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
@@ -121,7 +27,7 @@
         <label>・フリガナ（<span style="color: red;">必須</span>）<input type="text" id="furigana" required></label>
         <span class="error" id="error-furigana"></span>
 
-         <label>・生年月日（<span style="color: red;">必須</span>）</label>
+       <label>・生年月日（<span style="color: red;">必須</span>）</label>
         <div class="dob-container">
             <select id="dob-year" required>
                 <option value="">YYYY</option>
@@ -211,60 +117,39 @@
     </form>
 
     <script>
-        function validateForm() {
-            let isValid = true;
-            document.querySelectorAll(".error").forEach(el => el.textContent = "");
-            let formData = {};
-            document.querySelectorAll("[required]").forEach(input => {
-                if (!input.value.trim()) {
-                    let errorElement = document.getElementById("error-" + input.id);
-                    if (errorElement) {
-                        errorElement.textContent = "未入力です";
-                    }
-                    isValid = false;
-                } else {
-                    formData[input.id] = input.value;
+        document.addEventListener("DOMContentLoaded", function() {
+            const dropArea = document.getElementById("drop-area");
+            const fileInput = document.getElementById("photo");
+            
+            dropArea.addEventListener("click", function() {
+                fileInput.click();
+            });
+            
+            dropArea.addEventListener("dragover", function(e) {
+                e.preventDefault();
+                this.style.borderColor = "#000";
+            });
+            
+            dropArea.addEventListener("dragleave", function(e) {
+                e.preventDefault();
+                this.style.borderColor = "#ccc";
+            });
+            
+            dropArea.addEventListener("drop", function(e) {
+                e.preventDefault();
+                this.style.borderColor = "#ccc";
+                const file = e.dataTransfer.files[0];
+                fileInput.files = e.dataTransfer.files;
+                if (file) {
+                    this.textContent = file.name;
                 }
             });
             
-            let fileInput = document.getElementById("photo");
-            if (fileInput.files.length > 0) {
-                let reader = new FileReader();
-                reader.onloadend = function () {
-                    formData.photo = reader.result.split(',')[1]; // Base64データを取得
-                    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", formData)
-                        .then(response => console.log("メール送信成功", response.status, response.text))
-                        .catch(error => console.log("メール送信失敗", error));
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            }
-        }
-
-        document.getElementById('drop-area').addEventListener('click', function() {
-            document.getElementById('photo').click();
-        });
-
-        document.getElementById('drop-area').addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#000';
-        });
-
-        document.getElementById('drop-area').addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#ccc';
-        });
-
-        document.getElementById('drop-area').addEventListener('drop', function(e) {
-            e.preventDefault();
-            const file = e.dataTransfer.files[0];
-            document.getElementById('photo').files = e.dataTransfer.files;
-            this.textContent = file.name;
-        });
-
-        document.getElementById('photo').addEventListener('change', function() {
-            if (this.files.length > 0) {
-                document.getElementById('drop-area').textContent = this.files[0].name;
-            }
+            fileInput.addEventListener("change", function() {
+                if (this.files.length > 0) {
+                    dropArea.textContent = this.files[0].name;
+                }
+            });
         });
     </script>
 </body>

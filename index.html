@@ -185,15 +185,29 @@
             let reader = new FileReader();
             reader.onloadend = function () {
                 formData.photo = reader.result.split(',')[1];
-                localStorage.setItem("formData", JSON.stringify(formData));
-                console.log("Form Data Saved to localStorage:", formData); // デバッグ用
-                window.location.href = "confirmation.html";
+
+                // Attempt to store data in localStorage
+                try {
+                    localStorage.setItem("formData", JSON.stringify(formData));
+                    console.log("Form Data Saved to localStorage:", formData);
+                    window.location.href = "confirmation.html";
+                } catch (e) {
+                    if (e.name === 'QuotaExceededError') {
+                        alert("保存容量が超過しました。データを削減して再度お試しください。");
+                    }
+                }
             };
             reader.readAsDataURL(fileInput.files[0]);
         } else {
-            localStorage.setItem("formData", JSON.stringify(formData));
-            console.log("Form Data Saved to localStorage without photo:", formData); // デバッグ用
-            window.location.href = "confirmation.html";
+            try {
+                localStorage.setItem("formData", JSON.stringify(formData));
+                console.log("Form Data Saved to localStorage without photo:", formData);
+                window.location.href = "confirmation.html";
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    alert("保存容量が超過しました。データを削減して再度お試しください。");
+                }
+            }
         }
     }
 }

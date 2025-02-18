@@ -74,7 +74,7 @@
             const formData = JSON.parse(localStorage.getItem("formData"));
 
             // Step 1: Upload Image to Google Drive
-        const driveUploadUrl = "YOUR_GOOGLE_DRIVE_UPLOAD_URL";
+        const driveUploadUrl = "https://script.google.com/macros/s/AKfycbwoHA4CmJVygoB90kAM4oOzfsRN0VSeNnai23I-EeXz2MVM6xMycDmJmLE7H07aG-Xh/exec";
         const imageBlob = dataURLToBlob(`data:image/png;base64,${formData.photo}`);
         const form = new FormData();
         form.append("file", imageBlob, "photo.png");

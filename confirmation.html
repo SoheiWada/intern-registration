@@ -23,47 +23,45 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            if (localStorage.getItem("restoreData")) {
-                localStorage.setItem("formData", localStorage.getItem("restoreData"));
-                localStorage.removeItem("restoreData");
-            }
+    if (localStorage.getItem("restoreData")) {
+        localStorage.setItem("formData", localStorage.getItem("restoreData"));
+        localStorage.removeItem("restoreData");
+    }
 
-            const formData = JSON.parse(localStorage.getItem("formData"));
-            const confirmationDiv = document.getElementById("confirmation");
+    const formData = JSON.parse(localStorage.getItem("formData"));
+    const confirmationDiv = document.getElementById("confirmation");
 
-            if (!formData) {
-                confirmationDiv.innerHTML = "<p>フォームデータが見つかりませんでした。</p>";
-                return;
-            }
+    if (!formData) {
+        confirmationDiv.innerHTML = "<p>フォームデータが見つかりませんでした。</p>";
+        return;
+    }
 
-            const fields = {
-                name: "氏名",
-                furigana: "フリガナ",
-                email: "メールアドレス",
-                phone: "電話番号（任意）",
-                job: "希望職種",
-                schedule: "希望勤務日程",
-                experience: "経験の有無",
-                skills: "スキル&取得資格&自己PR",
-                motivation: "志望動機"
-            };
+    const fields = {
+        name: "氏名",
+        furigana: "フリガナ",
+        email: "メールアドレス",
+        phone: "電話番号（任意）",
+        job: "希望職種",
+        schedule: "希望勤務日程",
+        experience: "経験の有無",
+        skills: "スキル&取得資格&自己PR",
+        motivation: "志望動機"
+    };
 
-            for (const key in fields) {
-                if (formData[key]) {
-                    const p = document.createElement("p");
-                    p.textContent = `${fields[key]}: ${formData[key]}`;
-                    confirmationDiv.appendChild(p);
-                }
-            }
+    for (const key in fields) {
+        if (formData[key]) {
+            const p = document.createElement("p");
+            p.textContent = `${fields[key]}: ${formData[key]}`;
+            confirmationDiv.appendChild(p);
+        }
+    }
 
-            if (formData.photo) {
-                const img = document.createElement("img");
-                img.src = `data:image/png;base64,${formData.photo}`;
-                img.alt = "Uploaded photo";
-                img.style.maxWidth = "100%";
-                confirmationDiv.appendChild(img);
-            }
-        });
+    if (formData.photoName) {
+        const p = document.createElement("p");
+        p.textContent = `写真ファイル名: ${formData.photoName}`;
+        confirmationDiv.appendChild(p);
+    }
+});
 
         function goBack() {
     try {

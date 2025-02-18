@@ -118,6 +118,16 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+    const fileInput = document.getElementById("photo");
+
+    fileInput.addEventListener("change", function() {
+        const file = this.files[0];
+        if (file && file.size > 10 * 1024 * 1024) { // 10MB = 10 * 1024 * 1024 bytes
+            alert("ファイルサイズが10MBを超えています。別のファイルを選択してください。");
+            this.value = ""; // ファイル入力をクリア
+        }
+    });
+        document.addEventListener("DOMContentLoaded", function() {
     const restoreData = JSON.parse(localStorage.getItem("restoreData"));
 
     if (restoreData) {

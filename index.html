@@ -180,44 +180,50 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
         function validateForm() {
-            let isValid = true;
-            document.querySelectorAll(".error").forEach(el => el.textContent = "");
+    let isValid = true;
+    document.querySelectorAll(".error").forEach(el => el.textContent = "");
 
-            const fields = ["name", "furigana", "email", "phone", "job", "schedule", "experience", "skills", "motivation"];
-            let formData = {};
+    const fields = ["name", "furigana", "email", "phone", "job", "schedule", "experience", "skills", "motivation"];
+    let formData = {};
 
-            fields.forEach(id => {
-                let input = document.getElementById(id);
-                if (!input.value.trim() && id !== "phone") { // phone フィールドは任意
-                    document.getElementById("error-" + id).textContent = "未入力です";
-                    isValid = false;
-                } else {
-                    formData[id] = input.value;
-                }
-            });
+    fields.forEach(id => {
+        let input = document.getElementById(id);
+        if (!input.value.trim() && id !== "phone") { // phone フィールドは任意
+            document.getElementById("error-" + id).textContent = "未入力です";
+            isValid = false;
+        } else {
+            formData[id] = input.value;
+        }
+    });
 
-            const dobYear = document.getElementById("dob-year").value;
-            const dobMonth = document.getElementById("dob-month").value;
-            const dobDay = document.getElementById("dob-day").value;
-            if (!dobYear || !dobMonth || !dobDay) {
-                document.getElementById("error-dob-year").textContent = "未入力です";
-                isValid = false;
-            } else {
-                formData.dob = `${dobYear}-${dobMonth}-${dobDay}`;
-            }
+    const dobYear = document.getElementById("dob-year").value;
+    const dobMonth = document.getElementById("dob-month").value;
+    const dobDay = document.getElementById("dob-day").value;
+    if (!dobYear || !dobMonth || !dobDay) {
+        document.getElementById("error-dob-year").textContent = "未入力です";
+        isValid = false;
+    } else {
+        formData.dob = `${dobYear}-${dobMonth}-${dobDay}`;
+    }
 
-            if (isValid) {
-                try {
-                    localStorage.setItem("formData", JSON.stringify(formData));
-                    console.log("Form Data Saved to localStorage:", formData);
-                    window.location.href = "confirmation.html";
-                } catch (e) {
-                    if (e.name === 'QuotaExceededError') {
-                        alert("保存容量が超過しました。データを削減して再度お試しください。");
-                    }
-                }
+    const fileInput = document.getElementById("photo");
+    const file = fileInput.files[0];
+    if (file) {
+        formData.photoName = file.name; // ファイル名をフォームデータに追加
+    }
+
+    if (isValid) {
+        try {
+            localStorage.setItem("formData", JSON.stringify(formData));
+            console.log("Form Data Saved to localStorage:", formData);
+            window.location.href = "confirmation.html";
+        } catch (e) {
+            if (e.name === 'QuotaExceededError') {
+                alert("保存容量が超過しました。データを削減して再度お試しください。");
             }
         }
+    }
+}
     </script>
 </body>
 </html>

@@ -72,67 +72,73 @@
         console.log("Error:", e);
     }
 }
-        function submitForm() {
-            const formData = JSON.parse(localStorage.getItem("formData"));
+       function submitForm() {
+    const formData = JSON.parse(localStorage.getItem("formData"));
 
-            // Step 1: Upload Image to Google Drive
-        const driveUploadUrl = "https://script.google.com/macros/s/AKfycbybdRhZhpnKnpqXX0bwBp9Uy1eWEt3WrhAq3x_2PxtZk0dWOBJh5Oz-i9Bxxa2kZPTG/exec";
-        const imageBlob = dataURLToBlob(`data:image/png;base64,${formData.photo}`);
-        const form = new FormData();
-        form.append("file", imageBlob, "photo.png");
-
-        fetch(driveUploadUrl, {
-            method: "POST",
-            body: form
-        }).then(response => response.json())
-        .then(data => {
-            const imageUrl = data.webViewLink; // Assume the response contains the image URL
-
-            // Step 2: Send Data with Image Using EmailJS
-            const emailParams = {
-                name: formData.name,
-                furigana: formData.furigana,
-                email: formData.email,
-                phone: formData.phone,
-                job: formData.job,
-                schedule: formData.schedule,
-                experience: formData.experience,
-                skills: formData.skills,
-                motivation: formData.motivation,
-                image_url: imageUrl
-            };
-
-            emailjs.send("service_tuohgu9", "template_044wlxt", emailParams)
-            .then(response => {
-                console.log("EmailJS Success:", response.status, response.text);
-            }, error => {
-                console.log("EmailJS Error:", error);
-            });
-
-            // Step 3: Send Data to Google Sheets
-            const sheetsUrl = "https://script.google.com/macros/s/AKfycby248Yuw-sUL9XIV-kCjAL_yID6afUcT48x2RZRKxd_qqIuC7yaEsd66fRsssSDVqV9/exec";
-            formData.image_url = imageUrl;
-
-            fetch(sheetsUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            }).then(response => response.text())
-            .then(data => {
-                console.log("Google Sheets Success:", data);
-                localStorage.removeItem("formData");
-                alert("登録が完了しました。後日担当者よりご連絡させていただきます。");
-                window.location.href = "index.html";
-            }).catch(error => {
-                console.log("Google Sheets Error:", error);
-                alert("登録に失敗しました。再試行してください。");
-            });
-
-        }).catch(error => {
-            console.log("Google Drive Upload Error:", error);
-            alert("画像のアップロードに失敗しました。再試行してください。");
-        });
+    // Step 1: Check if photo exists before uploading
+    if (!formData.photo) {
+        alert("写真が選択されていません。");
+        return;
     }
+
+    // Step 2: Upload Image to Google Drive
+    const driveUploadUrl = "https://script.google.com/macros/s/AKfycbybdRhZhpnKnpqXX0bwBp9Uy1eWEt3WrhAq3x_2PxtZk0dWOBJh5Oz-i9Bxxa2kZPTG/exec";
+    const imageBlob = dataURLToBlob(`data:image/png;base64,${formData.photo}`);
+    const form = new FormData();
+    form.append("file", imageBlob, "photo.png");
+
+    fetch(driveUploadUrl, {
+        method: "POST",
+        body: form
+    }).then(response => response.json())
+    .then(data => {
+        const imageUrl = data.webViewLink; // Assume the response contains the image URL
+
+        // Step 3: Send Data with Image Using EmailJS
+        const emailParams = {
+            name: formData.name,
+            furigana: formData.furigana,
+            email: formData.email,
+            phone: formData.phone,
+            job: formData.job,
+            schedule: formData.schedule,
+            experience: formData.experience,
+            skills: formData.skills,
+            motivation: formData.motivation,
+            image_url: imageUrl
+        };
+
+        emailjs.send("service_tuohgu9", "template_044wlxt", emailParams)
+        .then(response => {
+            console.log("EmailJS Success:", response.status, response.text);
+        }, error => {
+            console.log("EmailJS Error:", error);
+        });
+
+        // Step 4: Send Data to Google Sheets
+        const sheetsUrl = "https://script.google.com/macros/s/AKfycby248Yuw-sUL9XIV-kCjAL_yID6afUcT48x2RZRKxd_qqIuC7yaEsd66fRsssSDVqV9/exec";
+        formData.image_url = imageUrl;
+
+        fetch(sheetsUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        }).then(response => response.text())
+        .then(data => {
+            console.log("Google Sheets Success:", data);
+            localStorage.removeItem("formData");
+            alert("登録が完了しました。後日担当者よりご連絡させていただきます。");
+            window.location.href = "index.html";
+        }).catch(error => {
+            console.log("Google Sheets Error:", error);
+            alert("登録に失敗しました。再試行してください。");
+        });
+
+    }).catch(error => {
+        console.log("Google Drive Upload Error:", error);
+        alert("画像のアップロードに失敗しました。再試行してください。");
+    });
+}
 
     // Helper function to convert data URL to Blob
     function dataURLToBlob(dataUrl) {

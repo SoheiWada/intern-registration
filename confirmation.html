@@ -74,7 +74,7 @@
             const formData = JSON.parse(localStorage.getItem("formData"));
 
             // Step 1: Upload Image to Google Drive
-        const driveUploadUrl = "https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbybdRhZhpnKnpqXX0bwBp9Uy1eWEt3WrhAq3x_2PxtZk0dWOBJh5Oz-i9Bxxa2kZPTG/exec/exec";
+        const driveUploadUrl = "https://script.google.com/macros/s/AKfycbybdRhZhpnKnpqXX0bwBp9Uy1eWEt3WrhAq3x_2PxtZk0dWOBJh5Oz-i9Bxxa2kZPTG/exec";
         const imageBlob = dataURLToBlob(`data:image/png;base64,${formData.photo}`);
         const form = new FormData();
         form.append("file", imageBlob, "photo.png");
@@ -100,7 +100,7 @@
                 image_url: imageUrl
             };
 
-            emailjs.send(service_tuohgu9, template_044wlxt, emailParams)
+            emailjs.send("service_tuohgu9", "template_044wlxt", emailParams)
             .then(response => {
                 console.log("EmailJS Success:", response.status, response.text);
             }, error => {
@@ -108,7 +108,7 @@
             });
 
             // Step 3: Send Data to Google Sheets
-            const sheetsUrl = "https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycby248Yuw-sUL9XIV-kCjAL_yID6afUcT48x2RZRKxd_qqIuC7yaEsd66fRsssSDVqV9/exec/exec/exec";
+            const sheetsUrl = "https://script.google.com/macros/s/AKfycby248Yuw-sUL9XIV-kCjAL_yID6afUcT48x2RZRKxd_qqIuC7yaEsd66fRsssSDVqV9/exec";
             formData.image_url = imageUrl;
 
             fetch(sheetsUrl, {

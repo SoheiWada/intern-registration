@@ -168,6 +168,16 @@ document.addEventListener("DOMContentLoaded", function() {
             dropArea.textContent = file.name;
         }
     });
+    if (localStorage.getItem("restoreData")) {
+        const restoreData = JSON.parse(localStorage.getItem("restoreData"));
+        for (const key in restoreData) {
+            const input = document.getElementById(key);
+            if (input) {
+                input.value = restoreData[key];
+            }
+        }
+        localStorage.removeItem("restoreData");
+    }
 });
         function validateForm() {
             let isValid = true;

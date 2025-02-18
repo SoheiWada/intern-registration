@@ -100,7 +100,7 @@
                 image_url: imageUrl
             };
 
-            emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", emailParams)
+            emailjs.send("service_tuohgu9", "template_044wlxt", emailParams)
             .then(response => {
                 console.log("EmailJS Success:", response.status, response.text);
             }, error => {
@@ -108,7 +108,7 @@
             });
 
             // Step 3: Send Data to Google Sheets
-            const sheetsUrl = "https://script.google.com/macros/s/YOUR_DEPLOYED_WEB_APP_URL/exec";
+            const sheetsUrl = "https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbwxYEhrMQmRfvV7cInyDXm5Yh8VkZeXR4F86bHFc3V2YiBDXDcNwOi6whcFE0rUSZPI/exec/exec";
             formData.image_url = imageUrl;
 
             fetch(sheetsUrl, {

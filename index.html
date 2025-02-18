@@ -128,120 +128,46 @@
         }
     });
 });
-        document.addEventListener("DOMContentLoaded", function() {
-    const restoreData = JSON.parse(localStorage.getItem("restoreData"));
 
-    if (restoreData) {
-        const fields = ["name", "furigana", "email", "phone", "job", "schedule", "experience", "skills", "motivation"];
-        fields.forEach(id => {
-            let input = document.getElementById(id);
-            if (input) {
-                input.value = restoreData[id] || "";
-            }
-        });
+function validateForm() {
+    let isValid = true;
+    document.querySelectorAll(".error").forEach(el => el.textContent = "");
 
-        const dob = restoreData.dob ? restoreData.dob.split("-") : [];
-        if (dob.length === 3) {
-            document.getElementById("dob-year").value = dob[0];
-            document.getElementById("dob-month").value = dob[1];
-            document.getElementById("dob-day").value = dob[2];
-        }
+    const fields = ["name", "furigana", "email", "phone", "job", "schedule", "experience", "skills", "motivation"];
+    let formData = {};
 
-        localStorage.removeItem("restoreData");
-    }
-});
-        document.addEventListener("DOMContentLoaded", function() {
-            const dropArea = document.getElementById("drop-area");
-            const fileInput = document.getElementById("photo");
-            
-            dropArea.addEventListener("click", function() {
-                fileInput.click();
-            });
-            
-            dropArea.addEventListener("dragover", function(e) {
-                e.preventDefault();
-                this.style.borderColor = "#000";
-            });
-            
-            dropArea.addEventListener("dragleave", function(e) {
-                e.preventDefault();
-                this.style.borderColor = "#ccc";
-            });
-            
-            dropArea.addEventListener("drop", function(e) {
-                e.preventDefault();
-                this.style.borderColor = "#ccc";
-                const file = e.dataTransfer.files[0];
-                fileInput.files = e.dataTransfer.files;
-                if (file) {
-                    this.textContent = file.name;
-                }
-            });
-            
-            fileInput.addEventListener("change", function() {
-                if (this.files.length > 0) {
-                    dropArea.textContent = this.files[0].name;
-                }
-            });
-        });
-    function validateForm() {
-        let isValid = true;
-        document.querySelectorAll(".error").forEach(el => el.textContent = "");
-
-        const fields = ["name", "furigana", "email", "phone", "job", "schedule", "experience", "skills", "motivation"];
-        let formData = {};
-
-        fields.forEach(id => {
-    let input = document.getElementById(id);
-    if (!input.value.trim() && id !== "phone") { // phone フィールドは任意
-        document.getElementById("error-" + id).textContent = "未入力です";
-        isValid = false;
-    } else {
-        formData[id] = input.value;
-    }
-});
-
-        const dobYear = document.getElementById("dob-year").value;
-        const dobMonth = document.getElementById("dob-month").value;
-        const dobDay = document.getElementById("dob-day").value;
-        if (!dobYear || !dobMonth || !dobDay) {
-            document.getElementById("error-dob-year").textContent = "未入力です";
+    fields.forEach(id => {
+        let input = document.getElementById(id);
+        if (!input.value.trim() && id !== "phone") { // phone フィールドは任意
+            document.getElementById("error-" + id).textContent = "未入力です";
             isValid = false;
         } else {
-            formData.dob = `${dobYear}-${dobMonth}-${dobDay}`;
+            formData[id] = input.value;
         }
+    });
 
-        if (isValid) {
-            let fileInput = document.getElementById("photo");
-            if (fileInput.files.length > 0) {
-                let reader = new FileReader();
-                reader.onloadend = function () {
-                    formData.photo = reader.result.split(',')[1];
+    const dobYear = document.getElementById("dob-year").value;
+    const dobMonth = document.getElementById("dob-month").value;
+    const dobDay = document.getElementById("dob-day").value;
+    if (!dobYear || !dobMonth || !dobDay) {
+        document.getElementById("error-dob-year").textContent = "未入力です";
+        isValid = false;
+    } else {
+        formData.dob = `${dobYear}-${dobMonth}-${dobDay}`;
+    }
 
-                    try {
-                        localStorage.setItem("formData", JSON.stringify(formData));
-                        console.log("Form Data Saved to localStorage:", formData);
-                        window.location.href = "confirmation.html";
-                    } catch (e) {
-                        if (e.name === 'QuotaExceededError') {
-                            alert("保存容量が超過しました。データを削減して再度お試しください。");
-                        }
-                    }
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                try {
-                    localStorage.setItem("formData", JSON.stringify(formData));
-                    console.log("Form Data Saved to localStorage without photo:", formData);
-                    window.location.href = "confirmation.html";
-                } catch (e) {
-                    if (e.name === 'QuotaExceededError') {
-                        alert("保存容量が超過しました。データを削減して再度お試しください。");
-                    }
-                }
+    if (isValid) {
+        try {
+            localStorage.setItem("formData", JSON.stringify(formData));
+            console.log("Form Data Saved to localStorage:", formData);
+            window.location.href = "confirmation.html";
+        } catch (e) {
+            if (e.name === 'QuotaExceededError') {
+                alert("保存容量が超過しました。データを削減して再度お試しください。");
             }
         }
     }
+}
 </script>
 </body>
 </html>

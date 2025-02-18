@@ -128,6 +128,7 @@
                 }
             });
         });
+<script>
 document.addEventListener("DOMContentLoaded", function() {
     const fileInput = document.getElementById("photo");
     const dropArea = document.getElementById("drop-area");
@@ -168,6 +169,7 @@ document.addEventListener("DOMContentLoaded", function() {
             dropArea.textContent = file.name;
         }
     });
+
     if (localStorage.getItem("restoreData")) {
         const restoreData = JSON.parse(localStorage.getItem("restoreData"));
         for (const key in restoreData) {
@@ -179,7 +181,8 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.removeItem("restoreData");
     }
 });
-        function validateForm() {
+
+function validateForm() {
     let isValid = true;
     document.querySelectorAll(".error").forEach(el => el.textContent = "");
 
@@ -210,8 +213,30 @@ document.addEventListener("DOMContentLoaded", function() {
     const file = fileInput.files[0];
     if (file) {
         formData.photoName = file.name; // ファイル名をフォームデータに追加
-    }
 
+        // 写真をサーバーにアップロード
+        const formDataForUpload = new FormData();
+        formDataForUpload.append("file", file);
+
+        fetch("https://script.google.com/macros/s/AKfycbybdRhZhpnKnpqXX0bwBp9Uy1eWEt3WrhAq3x_2PxtZk0dWOBJh5Oz-i9Bxxa2kZPTG/exec", { // アップロード先のURLに変更してください
+            method: "POST",
+            body: formDataForUpload
+        })
+        .then(response => response.json())
+        .then(data => {
+            formData.photoUrl = data.url; // サーバーから返されたURLをフォームデータに追加
+            saveFormData(formData, isValid);
+        })
+        .catch(error => {
+            console.error("写真のアップロードに失敗しました", error);
+            alert("写真のアップロードに失敗しました。再試行してください。");
+        });
+    } else {
+        saveFormData(formData, isValid);
+    }
+}
+
+function saveFormData(formData, isValid) {
     if (isValid) {
         try {
             localStorage.setItem("formData", JSON.stringify(formData));
@@ -224,6 +249,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 }
-    </script>
+</script>
 </body>
 </html>

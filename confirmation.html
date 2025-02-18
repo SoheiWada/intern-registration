@@ -66,10 +66,14 @@
         });
 
         function goBack() {
-    localStorage.setItem("restoreData", localStorage.getItem("formData"));
-    window.location.href = "index.html";
+    try {
+        localStorage.setItem("restoreData", localStorage.getItem("formData"));
+        window.location.href = "index.html";
+    } catch (e) {
+        alert("データの保存中にエラーが発生しました。再試行してください。");
+        console.log("Error:", e);
+    }
 }
-
         function submitForm() {
             const formData = JSON.parse(localStorage.getItem("formData"));
 
